@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Off-Token Galaxy</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Enhanced Loader -->
+    <div id="loader">
+        <div id="loader-content-wrapper">
+            <div class="galaxy-spinner"></div>
+            <h1 id="loader-text">Off-Token</h1>
+            <p id="loader-dynamic-message">Loading the decentralized galaxy...</p>
+        </div>
+    </div>
+
+    <!-- Three.js Canvas Container -->
+    <div id="canvas-container"></div>
+
+    <!-- Project Info Modal -->
+    <div id="project-info-modal" class="project-info-modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <div class="modal-body">
+                <div class="project-detail-galaxy">
+                    <div class="project-header">
+                        <div class="project-icon-galaxy"></div>
+                        <h2></h2>
+                    </div>
+                    <div class="project-content">
+                        <p></p>
+                        <div class="action-buttons">
+                            <a href="#" class="action-button transactions-button">
+                                <span class="button-icon">🔍</span>
+                                Transactions
+                            </a>
+                            <a href="#" class="action-button tokens-button">
+                                <span class="button-icon">🪙</span>
+                                Tokens
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.7.1/gsap.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
