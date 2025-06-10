@@ -89,17 +89,20 @@ function hideProjectInfoModal() {
 function initLoader() {
     const loaderElement = document.getElementById('loader');
     const loaderText = document.getElementById('loader-text');
-    const dynamicMessage = document.getElementById('loader-dynamic-message');
-    if (!loaderElement || !loaderText || !dynamicMessage) return;
+    const loaderMessage = document.getElementById('loader-message');
+    if (!loaderElement || !loaderText) return;
     loaderText.textContent = 'Off-Token';
-    dynamicMessage.textContent = 'Loading the decentralized galaxy...';
+    loaderText.style.fontSize = '4rem';
+    loaderText.style.letterSpacing = '0.1em';
+    loaderText.style.fontWeight = 'bold';
+    if (loaderMessage) loaderMessage.style.display = 'none';
     setTimeout(() => {
         loaderElement.classList.add('hidden');
         setTimeout(() => {
             loaderElement.style.display = 'none';
             animateOffTokenTextEnter();
-        }, 800);
-    }, 1500);
+        }, 500);
+    }, 2000);
 }
 
 // Three.js initialization
@@ -164,7 +167,7 @@ function createGalaxy() {
     // Create portal effects
     createPortalEffects();
 
-    const radius = 15; // Increased radius of the galaxy for more space
+    const radius = 5; // Reduced radius to keep objects closer to center
     const numProjects = projects.length;
     projectFloatData = [];
     projects.forEach((project, index) => {
@@ -318,13 +321,13 @@ function createGalaxy() {
         }
 
         const mesh = new THREE.Mesh(geometry, material);
+        mesh.scale.set(1.5, 1.5, 1.5); // Make objects 50% larger
 
-        // Position objects in a more interesting spiral galaxy pattern
-        const angle = (index / numProjects) * Math.PI * 6; // More spiral loops
-        const spiralFactor = 0.8 + (index / numProjects) * 0.5; // Tighter spiral for inner objects
-        const x = Math.cos(angle) * radius * spiralFactor;
-        const y = (Math.sin(index * 0.7) * 3) + (Math.random() - 0.5) * 2; // More varied height
-        const z = Math.sin(angle) * radius * spiralFactor;
+        // Position objects in a more centered pattern
+        const angle = (index / numProjects) * Math.PI * 2; // Even distribution in a circle
+        const x = Math.cos(angle) * radius;
+        const y = Math.sin(index * 0.7) * 2; // Reduced vertical spread
+        const z = Math.sin(angle) * radius;
         mesh.position.set(x, y, z);
         
         // Add random rotation
@@ -1023,26 +1026,22 @@ function animate() {
     
     // Fluctuating floating movement for each project (keep in view)
     if (!isDetailView && projectFloatData && projectFloatData.length) {
-        projectFloatData.forEach((data, i) => {
-            const group = data.group;
-            // Only for the first 3 projects (the main ones): always keep in view
-            if (i < 3) {
-                // Calculate floating offset
-                const fx = Math.sin(time * data.floatSpeedX + i) * data.floatAmpX;
-                const fy = Math.cos(time * data.floatSpeedY + i * 2) * data.floatAmpY;
-                const fz = Math.sin(time * data.floatSpeedZ + i * 3) * data.floatAmpZ;
-                // New candidate position
-                let newPos = data.basePos.clone().add(new THREE.Vector3(fx, fy, fz));
-                // Clamp to camera frustum (keep in view)
-                let ndc = newPos.clone().project(camera);
-                ndc.x = Math.max(-0.85, Math.min(0.85, ndc.x));
-                ndc.y = Math.max(-0.85, Math.min(0.85, ndc.y));
-                let clamped = ndc.unproject(camera);
-                group.position.copy(clamped);
-            } else {
-                // For all other objects, allow normal orbital motion (no forced clamping)
-                // (No action needed here, handled by their own animation logic)
-            }
+        projectFloatData.forEach(data => {
+            const time = Date.now() * 0.001;
+            
+            // Calculate new positions with constrained movement
+            const newX = data.basePos.x + Math.sin(time * data.floatSpeedX) * data.floatAmpX;
+            const newY = data.basePos.y + Math.sin(time * data.floatSpeedY) * data.floatAmpY;
+            const newZ = data.basePos.z + Math.sin(time * data.floatSpeedZ) * data.floatAmpZ;
+            
+            // Apply constrained movement to keep objects in view
+            data.group.position.x = Math.max(-8, Math.min(8, newX));
+            data.group.position.y = Math.max(-5, Math.min(5, newY));
+            data.group.position.z = Math.max(-8, Math.min(8, newZ));
+            
+            // Add gentle rotation
+            data.group.rotation.x += 0.001;
+            data.group.rotation.y += 0.001;
         });
     }
     
@@ -1166,10 +1165,10 @@ function onClick(event) {
         if (projectData) {
             // Add click feedback animation
             gsap.to(intersectedObject.scale, {
-                x: 1.4,
-                y: 1.4,
-                z: 1.4,
-                duration: 0.2,
+                x: 1.2,
+                y: 1.2,
+                z: 1.2,
+                duration: 0.15,
                 ease: "power2.out",
                 yoyo: true,
                 repeat: 1,
@@ -1202,8 +1201,8 @@ function focusOnProject(projectObject) {
         x: cameraTargetPosition.x,
         y: cameraTargetPosition.y,
         z: cameraTargetPosition.z,
-        duration: 1.5,
-        ease: "power3.inOut",
+        duration: 0.8,
+        ease: "power2.out",
         onUpdate: function() {
             camera.lookAt(targetPosition);
         }
